@@ -91,34 +91,6 @@ def received_message(event):
         send_message(sender_id, "Message with attachment received")
 
 
-
-
-def send_greeting():
-    #set greeting message on welcome screen
-    log("sending message to {recipient}: {text}".format(recipient=recipient_id))
-
-    data = json.dumps({
-        "setting_type":"greeting",
-        "greeting":{
-            "text":"Hi {{user_first_name}}, welcome to this bot."
-        }
-    })
-    
-    params = {
-        "access_token": os.environ["PAGE_ACCESS_TOKEN"]
-    }
-    headers = {
-        "Content-Type": "application/json"
-    }
-    
-    r = requests.post("https://graph.facebook.com/v2.6/me/thread_settings", params=params, headers=headers, data=data)
-    if r.status_code != 200:
-        log("setting greeting text")
-        log(r.status_code)
-        log(r.text)
-
-    return "ok", 200
-
 def send_message(recipient_id, message_text):
 
     log("sending message to {recipient}: {text}".format(recipient=recipient_id, text=message_text))
@@ -149,7 +121,7 @@ def send_button_message(recipient_id):
                     {
                         "type":"postback",
                         "title":"Find a bot",
-                        "payload":"find()"
+                        "payload":"Find a bot"
                     },
                     {
                         "type":"postback",
@@ -166,91 +138,7 @@ def send_button_message(recipient_id):
 
     call_send_api(data)
 
-def send_image_message(recipient_id):
-    
-    data = json.dumps({
-        "recipient": {
-            "id": recipient_id
-        },
-        "message": {
-            "attachment": {
-                "type":"image",
-                "payload":{
-                    "url":"http://i.imgur.com/76rJlO9.jpg"
-                }
-            }
-        }
-    })
-
-    log("sending image to {recipient}: ".format(recipient=recipient_id))
-
-    call_send_api(data)
-
-def send_file_message(recipient_id):
-    
-    data = json.dumps({
-        "recipient": {
-            "id": recipient_id
-        },
-        "message": {
-            "attachment": {
-                "type":"file",
-                "payload":{
-                    "url":"http://ee.usc.edu/~redekopp/ee355/EE355_Syllabus.pdf"
-                }
-            }
-        }
-    })
-
-    log("sending file to {recipient}: ".format(recipient=recipient_id))
-
-    call_send_api(data)
-
-
-def send_audio_message(recipient_id):
-
-    data = json.dumps({
-        "recipient": {
-            "id": recipient_id
-        },
-        "message": {
-            "attachment": {
-                "type":"audio",
-                "payload":{
-                    "url":"http://www.stephaniequinn.com/Music/Allegro%20from%20Duet%20in%20C%20Major.mp3"
-                }
-            }
-        }
-    })
-
-    log("sending audio to {recipient}: ".format(recipient=recipient_id))
-
-    call_send_api(data)
-
-
-def send_video_message(recipient_id):
-
-    data = json.dumps({
-        "recipient": {
-            "id": recipient_id
-        },
-        "message": {
-            "attachment": {
-                "type":"video",
-                "payload":{
-                    "url":"http://techslides.com/demos/sample-videos/small.mp4"
-                }
-            }
-        }
-    })
-
-    log("sending video to {recipient}: ".format(recipient=recipient_id))
-
-    call_send_api(data)
-
-def send_share_message(recipient_id):
-    
-    # Share button only works with Generic Template
+def send_button_category(recipient_id):
     data = json.dumps({
         "recipient": {
             "id": recipient_id
@@ -259,29 +147,148 @@ def send_share_message(recipient_id):
             "attachment": {
                 "type":"template",
                 "payload":{
-                    "template_type":"generic",
-                    "elements":[
+                    "template_type":"button",
+                    "text":"What category of bot?",
+                    "buttons":[
                     {
-                        "title":"Reddit link",
-                        "subtitle":"Something funny or interesting",
-                        "image_url":"https://pbs.twimg.com/profile_images/667516091330002944/wOaS8FKS.png",
-                        "buttons":[
-                        {
-                            "type":"element_share"
-                        }
-                        ]
-                    }    
+                        "type":"postback",
+                        "title":"Games",
+                        "payload":"Games"
+                    },
+                    {
+                        "type":"postback",
+                        "title":"Health",
+                        "payload":"Health"
+                    },
+                    {
+                        "type":"postback",
+                        "title":"Community",
+                        "payload":"Community"
+                    }
                     ]
                 }
-        
             }
         }
     })
 
-    log("sending share button to {recipient}: ".format(recipient=recipient_id))
+    log("sending category button to {recipient}: ".format(recipient=recipient_id))
 
     call_send_api(data)
 
+def send_button_community(recipient_id):
+    data = json.dumps({
+        "recipient": {
+            "id": recipient_id
+        },
+        "message": {
+            "attachment": {
+                "type":"template",
+                "payload":{
+                    "template_type":"button",
+                    "text":"Here is the list of community bots",
+                    "buttons":[
+                    {
+                        "type":"web_url",
+                        "url":"https://m.me/Comrades_nature",
+                        "title":"Comrades_nature"
+                    },
+                    {
+                        "type":"web_url",
+                        "url":"https://m.me/Botstore",
+                        "title":"Botstore"
+                    },
+                    {
+                        "type":"web_url",
+                        "title":"Ggflaskbot",
+                        "url":"https://m.me/Ggflaskbot"
+                    }
+                    ]
+                }
+            }
+        }
+    })
+
+    log("sending community button to {recipient}: ".format(recipient=recipient_id))
+
+    call_send_api(data)
+
+def send_generic_message(recipient_id):
+    
+    data = json.dumps({
+        "recipient": {
+            "id": recipient_id
+        },
+        "message": {
+            "attachment": {
+                "type": "template",
+                "payload": {
+                    "template_type": "generic",
+                    "elements": [{
+                        "title": "Comrades_nature",
+                        "subtitle": "A bot to help comrades solve their nature problems",
+                        "item_url": "https://m.me/Comrades_nature",               
+                        "image_url": "",
+                        "buttons": [{
+                            "type": "web_url",
+                            "url": "https://m.me/Comrades_nature",
+                            "title": "Visit the bot"
+                        }],
+                    }, {
+                        "title": "Botstore",
+                        "subtitle": "Find all bots on facebook",
+                        "item_url": "https://m.me/Botstore",               
+                        "image_url": "",
+                        "buttons": [{
+                            "type": "web_url",
+                            "url": "https://m.me/Botstore",
+                            "title": "Visit the bot"
+                        }]
+                    }]
+                }
+            }
+        }
+    })
+
+    log("sending template with choices to {recipient}: ".format(recipient=recipient_id))
+
+    call_send_api(data)
+
+def send_generic_category(recipient_id):
+    data = json.dumps({
+        "recipient": {
+            "id": recipient_id
+        },
+        "message": {
+            "attachment": {
+                "type": "template",
+                "payload": {
+                    "template_type": "generic",
+                    "elements": [{
+                        "title": "Bots category",
+                        "subtitle": "Please select one of the categories",
+                        "buttons": [{
+                            "type": "postback",
+                            "title":"Community",
+                            "payload":"Community"
+                        },{
+                            "type": "postback",
+                            "title": "Games",
+                            "payload": "Games"
+                        },{
+                            "type": "postback",
+                            "title": "Health",
+                            "payload": "Health"
+                        }
+                        ]
+                    }]
+                }
+            }
+        }
+    })
+
+    log("sending template with choices to {recipient}: ".format(recipient=recipient_id))
+
+    call_send_api(data)
 
 def received_postback(event):
 
@@ -291,10 +298,20 @@ def received_postback(event):
     # The payload param is a developer-defined field which is set in a postback
     # button for Structured Messages
     payload = event["postback"]["payload"]
+    user_details_url = "https://graph.facebook.com/v2.6/%s"%sender_id
+    user_details_params = {'fields':'first_name,last_name,profile_pic', 'access_token':os.environ["PAGE_ACCESS_TOKEN"]}
+    user_details = requests.get(user_details_url, user_details_params).json()
 
     if payload == 'Get Started':
         # Get Started button was pressed
-        send_message(sender_id, "Welcome to SoCal Echo Bot! Anything you type will be echoed back to you, except for some keywords.")
+        send_message(sender_id, "Welcome {} {} to bot store. You will find all facebook bots here.".format(user_details['first_name'], user_details['last_name']))
+        send_generic_category(sender_id)
+    elif payload == 'Find a bot':
+        send_button_category(sender_id)
+    elif payload == 'Community':
+        send_generic_message(sender_id)
+    elif payload == 'Games':
+        send_button_category(sender_id)
     else:
         # Notify sender that postback was successful
         send_message(sender_id, "Postback called")
